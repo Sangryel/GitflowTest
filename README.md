@@ -1,5 +1,3 @@
 # GitflowTest
 
-## Unreleased
-
-do something
+## 1.0.0
