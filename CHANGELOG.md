@@ -1,6 +1,6 @@
 
-## Unreleased
+## 1.0.0
 
 **ADDED**
-* Description about change
+* CHANGELOG.md
 
