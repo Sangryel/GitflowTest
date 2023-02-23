@@ -1,5 +1,3 @@
-# GitflowTest
-
 ## Unreleased
 
 **ADDED**
