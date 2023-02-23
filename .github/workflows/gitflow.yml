@@ -78,10 +78,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Check is changelog.md contains '## Unreleased'
+      - name: Check is CHANGELOG.md contains '## Unreleased'
         id: contains-unreleased
         run: |
-          cat changelog.md | grep --perl-regexp '^## Unreleased$' \
+          cat CHANGELOG.md | grep --perl-regexp '^## Unreleased$' \
           || echo 'result=false' >> $GITHUB_OUTPUT
 
       - name: Fail when previous is false
@@ -90,7 +90,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const message = `Invalid pull request: '## Unreleased' should be existed on changelog.md`
+            const message = `Invalid pull request: '## Unreleased' should be existed on CHANGELOG.md`
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -110,12 +110,12 @@ jobs:
         with:
           ref: ${{ env.DESTINATION_BRANCH }}
 
-      - name: Check is modify changelog.md
+      - name: Check is modify CHANGELOG.md
         id: modified-changelog
         run: |
           git checkout ${{ github.sha }}
           git diff --name-only ${{ env.DESTINATION_BRANCH }} \
-          | grep --perl-regexp 'changelog\.md' \
+          | grep --perl-regexp 'CHANGELOG\.md' \
           || echo 'result=false' >> $GITHUB_OUTPUT
 
       - name: Recommend when previous is false
@@ -128,7 +128,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `I recommend that you should modify changelog.md.`,
+              body: `I recommend that you should modify CHANGELOG.md.`,
             })
 
   check-release-branch:
@@ -171,10 +171,10 @@ jobs:
             })
             core.setFailed(message)
 
-      - name: Check is changelog.md do not contains '## Unreleased'
+      - name: Check is CHANGELOG.md do not contains '## Unreleased'
         id: not-contains-unreleased
         run: |
-          cat changelog.md | grep --perl-regexp '^## Unreleased$' \
+          cat CHANGELOG.md | grep --perl-regexp '^## Unreleased$' \
           && echo 'result=false' >> $GITHUB_OUTPUT \
           || :
 
@@ -184,7 +184,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const message = `Invalid pull request: '## Unreleased' should not be existed on changelog.md`
+            const message = `Invalid pull request: '## Unreleased' should not be existed on CHANGELOG.md`
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -199,10 +199,10 @@ jobs:
             })
             core.setFailed(message)
 
-      - name: Check is changelog.md contains '## ${{ env.VERSION }}'
+      - name: Check is CHANGELOG.md contains '## ${{ env.VERSION }}'
         id: contains-version
         run: |
-          cat changelog.md | grep --perl-regexp '^## ${{ env.VERSION }}$' \
+          cat CHANGELOG.md | grep --perl-regexp '^## ${{ env.VERSION }}$' \
           || echo 'result=false' >> $GITHUB_OUTPUT
 
       - name: Fail when previous is false
@@ -211,7 +211,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const message = `Invalid pull request: '## ${{ env.VERSION }}' should be existed on changelog.md`
+            const message = `Invalid pull request: '## ${{ env.VERSION }}' should be existed on CHANGELOG.md`
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -230,7 +230,7 @@ jobs:
         id: changelog
         run: |
           CHANGELOG=$(
-            cat changelog.md \
+            cat CHANGELOG.md \
               | sed -n '/^## ${{ env.VERSION }}/,/^## /p' \
               | sed '/^## /d'
           ) \
@@ -311,7 +311,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           CHANGELOG=$(
-            cat changelog.md \
+            cat CHANGELOG.md \
               | sed -n '/^## ${{ env.VERSION }}/,/^## /p' \
               | sed '/^## /d'
           )
