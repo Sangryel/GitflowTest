@@ -1,0 +1,64 @@
+name: Automation-Android-CI/CD
+
+on:
+  workflow_call:
+    inputs:
+      reference:
+        description: Reference to QA
+        type: string
+        required: true
+    outputs:
+      message:
+        description: Message of QA result
+        value: ${{ jobs.complete.outputs.message || jobs.fail.outputs.message }}
+  workflow_dispatch:
+    inputs:
+      reference:
+        description: Reference to QA
+        type: string
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: |
+          echo 'Build. reference : ${{ inputs.reference }}'
+
+  qa:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Check
+        run: |
+          echo qa
+
+  complete:
+    runs-on: ubuntu-latest
+
+    needs:
+      - qa
+    if: ${{ needs.qa.result == 'success' }}
+    outputs:
+      message: ${{ steps.report.outputs.message }}
+    steps:
+      - name: Report complete
+        id: report
+        run: |
+          echo "message='QA is completed!'" >> $GITHUB_OUTPUT
+        
+  fail:
+    runs-on: latest-ubuntu
+
+    needs:
+      - qa
+    if: ${{ needs.qa.result == 'failure' }}
+    outputs:
+      message: ${{ steps.report.outputs.message }}
+    steps:
+      - name: Report fail
+        id: report
+        run: |
+          echo "message='QA is failed!'" >> $GITHUB_OUTPUT
